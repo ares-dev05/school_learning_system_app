@@ -7,11 +7,11 @@
     tools:context=".CreateActivity">
 
     <LinearLayout
-        android:layout_width="382dp"
-        android:layout_height="682dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="24dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView35"
@@ -39,7 +39,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName7"
+            android:id="@+id/task_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -56,7 +56,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName15"
+            android:id="@+id/task_description"
             android:layout_width="match_parent"
             android:layout_height="159dp"
             android:ems="10"
@@ -100,9 +100,10 @@
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btn_create1"
+            android:id="@+id/btn_create_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="Create Task" />
 
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="my.edu.utar.drawertest.ui.home.TeacherDashBoardActivity"
+        android:label="@string/menu_home"
+        tools:layout="@layout/activity_assignment" />
+
+    <fragment
+        android:id="@+id/nav_newTask"
+        android:name="my.edu.utar.drawertest.CreateGroupActivity"
+        android:label="@string/menu_home"
+        tools:layout="@layout/activity_assignment" />
+
+    <fragment
+        android:id="@+id/nav_time"
+        android:name="my.edu.utar.drawertest.ui.set_time.TimeFragment"
+        android:label="@string/menu_time"
+        tools:layout="@layout/fragment_timeline" />
+
+    <fragment
+        android:id="@+id/nav_part"
+        android:name="my.edu.utar.drawertest.ui.set_part.PartsFragment"
+        android:label="@string/menu_parts"
+        tools:layout="@layout/fragment_parts" />
+
+    <fragment
+        android:id="@+id/nav_review"
+        android:name="my.edu.utar.drawertest.ui.home.TeacherTasksActivity"
+        android:label="@string/menu_review"
+        tools:layout="@layout/review_fragment" />
+
+
+</navigation>

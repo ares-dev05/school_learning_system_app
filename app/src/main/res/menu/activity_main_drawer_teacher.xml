@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/baseline_home_24"
+            android:title="@string/menu_home" />
+
+        <item
+            android:id="@+id/nav_newTask"
+            android:icon="@drawable/baseline_note_add_24"
+            android:title="@string/menu_newTask" />
+
+        <item
+            android:id="@+id/nav_review"
+            android:icon="@drawable/baseline_fingerprint_24"
+            android:title="@string/menu_review" />
+
+<!--        <item-->
+<!--            android:id="@+id/nav_time"-->
+<!--            android:icon="@drawable/time"-->
+<!--            android:title="@string/menu_time" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/nav_part"-->
+<!--            android:icon="@drawable/parts"-->
+<!--            android:title="@string/menu_parts" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/nav_review"-->
+<!--            android:icon="@drawable/review"-->
+<!--            android:title="@string/menu_review" />-->
+
+        <item
+            android:id="@+id/nav_logOut"
+            android:icon="@drawable/baseline_logout_24"
+            android:title="@string/menu_logOut" />
+
+
+
+    </group>
+</menu>

@@ -14,53 +14,71 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:minHeight="88dp">
+    android:id="@+id/item_layout"
+    android:orientation="vertical"
+    android:minHeight="64dp">
 
-    <ImageView
-        android:id="@+id/mtrl_list_item_icon"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignParentStart="true"
-        android:padding="16dp"/>
-
-    <TextView
-        android:id="@+id/mtrl_list_item_title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_toEndOf="@id/mtrl_list_item_icon"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:maxLines="1"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:textColor="@color/mtrl_list_item_tint"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/mtrl_list_item_icon"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:padding="16dp"/>
 
-    <TextView
-        android:id="@+id/mtrl_list_item_description"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/mtrl_list_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/mtrl_list_item_icon"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:textColor="@color/mtrl_list_item_tint"/>
+
+            <TextView
+                android:id="@+id/mtrl_list_item_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mtrl_list_item_title"
+                android:layout_gravity="center_vertical"
+                android:layout_toEndOf="@id/mtrl_list_item_icon"
+                android:paddingEnd="16dp"
+                android:maxLines="2"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/mtrl_list_item_tint" />
+
+
+            <TextView
+                android:id="@+id/mtrl_list_item_deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mtrl_list_item_description"
+                android:layout_gravity="center_vertical"
+                android:layout_toEndOf="@id/mtrl_list_item_icon"
+                android:paddingEnd="16dp"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/mtrl_list_item_tint"/>
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mtrl_list_item_title"
-        android:layout_gravity="center_vertical"
-        android:layout_toEndOf="@id/mtrl_list_item_icon"
-        android:paddingEnd="16dp"
-        android:maxLines="4"
-        android:textAppearance="?attr/textAppearanceBody2"
-        android:textColor="@color/mtrl_list_item_tint"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        style="@style/Divider.Horizontal"/>
 
-    <TextView
-        android:id="@+id/mtrl_list_item_deadline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mtrl_list_item_description"
-        android:layout_gravity="center_vertical"
-        android:layout_toEndOf="@id/mtrl_list_item_icon"
-        android:paddingEnd="16dp"
-        android:maxLines="1"
-        android:textAppearance="?attr/textAppearanceBody2"
-        android:textColor="@color/mtrl_list_item_tint"/>
-
-</RelativeLayout>
+</LinearLayout>

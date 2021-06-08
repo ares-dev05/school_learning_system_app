@@ -4,63 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.review.ReviewFragment">
+    tools:context=".ui.review.ReviewActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/register_progress"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/register_form"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView26"
+            android:id="@+id/description_label"
             android:layout_width="match_parent"
-            android:layout_height="179dp"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="Review Assignment"
+            android:text="Description"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView4"
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="123dp"
-            android:src="@drawable/review" />
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Description"
+            android:layout_marginBottom="10dp"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/detach_file_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="left"
+            android:contentDescription="download"
+            android:text="Download the attach file."
+            app:backgroundTint="?attr/colorAccent"
+            app:iconTint="@color/white"
+            android:textColor="@color/white"
+            app:icon="@drawable/baseline_file_download_24"/>
+
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            style="@style/Widget.MaterialRatingBar.RatingBar" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/review_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:hint="@string/title_dlg_placeholder">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/textView36"
+            android:id="@+id/review_txt_static"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:text="Select Files:"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+            android:gravity="center_vertical"
+            android:text="Description"
+            android:textSize="14dp"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start Review" />
-
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="match_parent"
-            android:layout_height="117dp"
-            android:src="@drawable/upload" />
-
-        <TextView
-            android:id="@+id/textView37"
-            android:layout_width="match_parent"
-            android:layout_height="33dp"
-            android:gravity="bottom"
-            android:text="Upload Files:"
-            android:textSize="18sp"
-            android:textStyle="italic" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upload" />
-
+            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:contentDescription="Submit"
+            android:text="Submit"
+            app:backgroundTint="?attr/colorPrimary"
+            app:iconTint="@color/white"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_send"/>
     </LinearLayout>
 </FrameLayout>

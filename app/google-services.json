@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "58077720462",
+    "project_id": "android-student-peer-review",
+    "storage_bucket": "android-student-peer-review.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58077720462:android:6e7e5c5b106bb23da47edf",
+        "android_client_info": {
+          "package_name": "my.edu.utar.drawertest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "58077720462-3h1cs4vn6mtkmh7s2qorhdmnb7j6uljr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuESyCPs1Yb3qEHEKbsXK1LZtF12SgGU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "58077720462-3h1cs4vn6mtkmh7s2qorhdmnb7j6uljr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
