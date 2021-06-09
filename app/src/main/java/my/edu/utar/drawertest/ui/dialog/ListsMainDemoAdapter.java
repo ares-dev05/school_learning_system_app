@@ -16,7 +16,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import my.edu.utar.drawertest.R;
 import my.edu.utar.drawertest.data.GlobalClass;
 import my.edu.utar.drawertest.ui.home.AssignmentsActivity;
@@ -288,6 +292,19 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
                                             intent.putExtra("DESCRIPTION", selectedItem.getDescription());
                                             mContext.startActivity(intent);
                                         } else {
+                                            Date today = new Date();
+                                            Date deadline = null;
+                                            try {
+                                                deadline = new SimpleDateFormat("yyyy.MM.dd").parse((String)selectedItem.getDeadline());
+                                                if(today.compareTo(deadline) > 0) {
+                                                    Toast.makeText(mContext.getApplicationContext(), "This task has finished already.", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                                return;
+                                            }
+
                                             Intent intent = new Intent(mContext, StudentJoinActivity.class);
                                             intent.putExtra("TASK_KEY", taskkey);
                                             intent.putExtra("SUBMISSION_KEY", key);

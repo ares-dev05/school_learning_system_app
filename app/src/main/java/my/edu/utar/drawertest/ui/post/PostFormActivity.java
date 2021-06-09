@@ -2,6 +2,7 @@ package my.edu.utar.drawertest.ui.post;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -76,6 +79,7 @@ public class PostFormActivity extends AppCompatActivity {
     private LoadingFragment loadingFragment = LoadingFragment.newInstance();
     private static final int STORAGE_PERMISSION_CODE = 123;
     private int PICK_PDF_REQUEST = 1;
+    private String upload_extension;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +95,7 @@ public class PostFormActivity extends AppCompatActivity {
                 loadingFragment.show(getSupportFragmentManager(), "Submiting your result...");
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReference();
-                StorageReference uploadfileRef = storageRef.child(task_key + "/" + submission_key + "/"  + selfkey + "/uploadresult.pdf");
+                StorageReference uploadfileRef = storageRef.child(task_key + "/" + submission_key + "/" + selfkey + "/uploadresult.pdf");
                 UploadTask uploadTask = uploadfileRef.putBytes(upload_data);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -110,7 +114,8 @@ public class PostFormActivity extends AppCompatActivity {
                         LoggedInUserView userInfo = global.getUserInfo();
                         Map<String, Object> data = new HashMap<>();
                         data.put("post_result_description", result_description.getEditText().getText().toString());
-                        data.put("post_result_url", task_key + "/" + submission_key + "/"  + selfkey + "/uploadresult.pdf");
+                        data.put("post_result_url", task_key + "/" + submission_key + "/" + selfkey + "/uploadresult.pdf");
+                        data.put("post_data_extension", upload_extension);
                         data.put("name", userInfo.getDisplayName());
                         data.put("email", userInfo.getEmail());
 
@@ -200,7 +205,7 @@ public class PostFormActivity extends AppCompatActivity {
 //            //starts new activity to select file and return data
 //            startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), FILE_PICKER_REQUEST_CODE);
             Intent intent = new Intent();
-            intent.setType("application/pdf");
+            intent.setType("*/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST);
         });
@@ -234,36 +239,45 @@ public class PostFormActivity extends AppCompatActivity {
             String path = null;
             try {
                 path = FilePath.getPath(this, filePath);
-            } catch(Exception e) {
+            } catch (Exception e) {
 
             }
-                File file;
-                if(path == null) {
-                    file = new File(filePath.getPath());
-                    tv_uploadpath.setText(filePath.getPath());
-                } else {
-                    file = new File(path);
-                    tv_uploadpath.setText(path);
-                }
+            File file = null;
+            if (path == null) {
+                file = new File(filePath.getPath());
+                tv_uploadpath.setText(filePath.getPath());
+            } else {
+                file = new File(path);
+                tv_uploadpath.setText(path);
+            }
 
-                int size = (int) file.length();
-                try {
-                    ParcelFileDescriptor pfd = getContentResolver().
-                            openFileDescriptor(filePath, "r");
-                    long fileSize = pfd.getStatSize();
-                    FileInputStream fileOutputStream =
-                            new FileInputStream(pfd.getFileDescriptor());
-                    upload_data = new byte[(int)fileSize];
-                    fileOutputStream.read(upload_data, 0, (int)fileSize);
-                    // Let the document provider know you're done by closing the stream.
-                    fileOutputStream.close();
-                    pfd.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            upload_extension = getfileExtension(filePath);
+
+            try {
+                ParcelFileDescriptor pfd = getContentResolver().
+                        openFileDescriptor(filePath, "r");
+                long fileSize = pfd.getStatSize();
+                FileInputStream fileOutputStream =
+                        new FileInputStream(pfd.getFileDescriptor());
+                upload_data = new byte[(int) fileSize];
+                fileOutputStream.read(upload_data, 0, (int) fileSize);
+                // Let the document provider know you're done by closing the stream.
+                fileOutputStream.close();
+                pfd.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private String getfileExtension(Uri uri) {
+        String extension;
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        extension = mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+        return extension;
     }
 
 

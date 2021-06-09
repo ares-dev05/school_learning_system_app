@@ -89,6 +89,7 @@ public class ReviewActivity extends AppCompatActivity {
     private int PICK_PDF_REQUEST = 1;
     private static final int CREATE_FILE = 2;
     private LoadingFragment loadingFragment = LoadingFragment.newInstance();
+    private String download_extention;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +154,7 @@ public class ReviewActivity extends AppCompatActivity {
                                 try {
                                     description_tv.setText((String)document.getData().get("post_result_description"));
                                     down_url = (String)document.getData().get("post_result_url");
+                                    download_extention = (String)document.getData().get("post_data_extension");
                                 } catch (Exception e) {
 
                                 }
@@ -271,15 +273,15 @@ public class ReviewActivity extends AppCompatActivity {
     private void createFile(Uri pickerInitialUri) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/pdf");
-        intent.putExtra(Intent.EXTRA_TITLE, "download.pdf");
+        intent.setType("*/*");
+
+        intent.putExtra(Intent.EXTRA_TITLE, "download." + download_extention);
 
         // Optionally, specify a URI for the directory that should be opened in
         // the system file picker when your app creates the document.
         intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
         startActivityForResult(intent, CREATE_FILE);
-        loadingFragment.show(getSupportFragmentManager(), "Downloading...");
     }
 
     @Override
@@ -289,6 +291,7 @@ public class ReviewActivity extends AppCompatActivity {
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK) {
 
         } else if( requestCode == CREATE_FILE && resultCode == RESULT_OK) {
+            loadingFragment.show(getSupportFragmentManager(), "Downloading...");
             try {
                 Uri filePath = data.getData();
 
