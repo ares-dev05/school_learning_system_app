@@ -93,15 +93,8 @@ public class StudentPostActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     DocumentSnapshot document = task.getResult();
-                                                    try {
-                                                        if(document.getData().get("post_result_description") == null) {
-                                                            adapter.addAssignmentList(taskKey, submission_key,title, description, review_period);
-                                                            mRecyclerView.setAdapter(adapter);
-                                                        }
-                                                    } catch(Exception e) {
-                                                        adapter.addAssignmentList(taskKey, submission_key,title, description, review_period);
-                                                        mRecyclerView.setAdapter(adapter);
-                                                    }
+                                                    adapter.addAssignmentList(taskKey, submission_key, title, description, review_period);
+                                                    mRecyclerView.setAdapter(adapter);
 
                                                 }
                                             }

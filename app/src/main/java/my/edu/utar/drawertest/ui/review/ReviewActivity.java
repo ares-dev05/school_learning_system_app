@@ -14,6 +14,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
@@ -61,6 +63,7 @@ import my.edu.utar.drawertest.MainActivity;
 import my.edu.utar.drawertest.R;
 import my.edu.utar.drawertest.data.GlobalClass;
 import my.edu.utar.drawertest.ui.common.LoadingFragment;
+import my.edu.utar.drawertest.ui.dialog.ListsMainDemoAdapter;
 import my.edu.utar.drawertest.ui.home.AssignmentsActivity;
 import my.edu.utar.drawertest.ui.login.LoggedInUserView;
 import my.edu.utar.drawertest.ui.post.FilePath;
@@ -90,6 +93,11 @@ public class ReviewActivity extends AppCompatActivity {
     private static final int CREATE_FILE = 2;
     private LoadingFragment loadingFragment = LoadingFragment.newInstance();
     private String download_extention;
+
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private ListsMainDemoAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +130,8 @@ public class ReviewActivity extends AppCompatActivity {
         GlobalClass global = GlobalClass.getInstance();
         LoggedInUserView userInfo = global.getUserInfo();
         String selfKey = userInfo.getKey();
+        boolean role = userInfo.isTeacher();
+
 
         submitBtn = (ExtendedFloatingActionButton) findViewById(R.id.submit);
         ratingBar = (MaterialRatingBar) findViewById(R.id.rating);
@@ -130,6 +140,13 @@ public class ReviewActivity extends AppCompatActivity {
         description_tv = (TextView) findViewById(R.id.description);
         review_txt_static_tv = (TextView) findViewById(R.id.review_txt_static);
         description_tv.setText(result_description);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_tasklist);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        adapter = new ListsMainDemoAdapter(this);
+
+        adapter.setType(8);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("task")
@@ -163,37 +180,36 @@ public class ReviewActivity extends AppCompatActivity {
                         }
 
                         db.collection("users")
-                                .document(selfKey)
+                                .document(student_key)
                                 .collection("joined_tasks")
                                 .document(task_key + submission_key)
-                                .collection("send_reviews")
-                                .document(student_key)
+                                .collection("reviews")
                                 .get()
-                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        boolean isDone = true;
-                                        Object info = null;
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        boolean isDone = false;
                                         if (task.isSuccessful()) {
-                                            DocumentSnapshot document = task.getResult();
-                                            info = document.getData();
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.d(TAG, document.getId() + " => " + document.getData());
 
-                                            if(info == null) {
-                                                isDone = false;
-                                            } else {
-                                                float rating = Float.parseFloat((String)document.getData().get("rating"));
-                                                ratingBar.setRating(rating);
-                                                ratingBar.setEnabled(false);
+                                                if(document.getId().equals(selfKey)) {
+                                                    isDone = true;
+                                                    adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
+                                                            (String)document.getData().get("description"));
+                                                } else if(role) {
+                                                    adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
+                                                            (String)document.getData().get("description"));
+                                                }
+                                            }
+                                            mRecyclerView.setAdapter(adapter);
+
+                                            if(isDone) {
+                                                ratingBar.setVisibility(View.GONE);
                                                 reviewText.setVisibility(View.GONE);
                                                 submitBtn.setVisibility(View.GONE);
-                                                review_txt_static_tv.setText((String)document.getData().get("description"));
+                                                review_txt_static_tv.setVisibility(View.GONE);
                                             }
-                                        } else {
-                                            Log.d(TAG, "Error getting documents: ", task.getException());
-                                            isDone = false;
-                                        }
-                                        if (!isDone) {
-                                            review_txt_static_tv.setVisibility(View.GONE);
                                         }
 
                                         showProgress(false);
@@ -224,7 +240,8 @@ public class ReviewActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Map<String, Object> data = new HashMap<>();
-                                data.put("rating", (float)ratingBar.getNumStars());
+                                data.put("name", userInfo.getDisplayName());
+                                data.put("rating", String.valueOf(ratingBar.getRating()));
                                 data.put("description", reviewText.getEditText().getText().toString());
                                 db.collection("users")
                                         .document(student_key)

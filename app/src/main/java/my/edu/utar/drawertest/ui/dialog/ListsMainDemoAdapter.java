@@ -30,6 +30,7 @@ import my.edu.utar.drawertest.ui.home.StudentPostActivity;
 import my.edu.utar.drawertest.ui.home.StudentsReviewActivity;
 import my.edu.utar.drawertest.ui.home.StudentsSubmissionActivity;
 import my.edu.utar.drawertest.ui.list.ListObject;
+import my.edu.utar.drawertest.ui.list.ReviewListObject;
 import my.edu.utar.drawertest.ui.list.StudentsListObject;
 import my.edu.utar.drawertest.ui.list.AssignmentsListObject;
 import my.edu.utar.drawertest.ui.list.TasksListObject;
@@ -48,8 +49,10 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
     static final int ITEM_STUDENT_ASSIGNMENTS_TYPE = 5;
     static final int ITEM_STUDENT_POST_TYPE = 6;
     static final int ITEM_POST_TASK_LINE = 7;
+    static final int ITEM_REVIEW_LINE = 8;
     private ArrayList<AssignmentsListObject> mAssignmentList = new ArrayList<AssignmentsListObject>();
     private ArrayList<ListObject> mTwoList = new ArrayList<ListObject>();
+    private ArrayList<ReviewListObject> mReviewList = new ArrayList<ReviewListObject>();
     private ArrayList<StudentsListObject> mStudentsList = new ArrayList<StudentsListObject>();
     private ArrayList<TasksListObject> mTasksList = new ArrayList<TasksListObject>();
 
@@ -59,6 +62,15 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
 
     public ListsMainDemoAdapter(Context context) {
         mContext = context;
+    }
+
+    public void addReviewList(String user_key, String name, String rating, String description) {
+        ReviewListObject object = new ReviewListObject(user_key, name, rating, description);
+        mReviewList.add(object);
+    }
+
+    public void setReviewList(ArrayList<ReviewListObject> object) {
+        mReviewList = object;
     }
 
     public void addAssignmentList(String taskKey, String key, String title, String description, String deadline) {
@@ -133,7 +145,8 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
             case ITEM_STUDENT_ASSIGNMENTS_TYPE:
             case ITEM_STUDENT_POST_TYPE:
                 return ThreeLineItemViewHolder.create(parent);
-
+            case ITEM_REVIEW_LINE:
+                return ReviewLineItemViewHolder.create(parent);
             default: // fall out
         }
         throw new RuntimeException();
@@ -160,6 +173,8 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
             case ITEM_STUDENT_ASSIGNMENTS_TYPE:
                 bindAssigmentHolder((ThreeLineItemViewHolder) viewHolder, position);
                 break;
+            case ITEM_REVIEW_LINE:
+                bindReviewHolder((ReviewLineItemViewHolder) viewHolder, position);
             default: // fall out
         }
 
@@ -381,6 +396,20 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
 
     }
 
+    public void bindReviewHolder(ReviewLineItemViewHolder holder, int position) {
+        final String name = mReviewList.get(position).getName();
+        final String description = mReviewList.get(position).getDescription();
+        final String rating = mReviewList.get(position).getRating();
+
+        holder.tv_title.setText(name);
+        holder.tv_description.setText(description);
+        float rate = Float.parseFloat(rating);
+        holder.ratingBar.setRating(rate);
+        holder.ratingBar.setEnabled(false);
+
+    }
+
+
 
     public void bindViewHolder(ThreeLineItemViewHolder holder, int position)
     {
@@ -396,7 +425,7 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
 
     @Override
     public int getItemViewType(int position) {
-        return position % 8;
+        return position % 9;
     }
 
     @Override
@@ -411,7 +440,8 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
             case 4:
             case 7:
                 return mTasksList.toArray().length;
-
+            case 8:
+                return mReviewList.toArray().length;
             default:
                 return mTwoList.toArray().length;
         }

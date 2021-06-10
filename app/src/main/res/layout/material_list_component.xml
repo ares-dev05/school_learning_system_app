@@ -47,7 +47,7 @@
         android:layout_gravity="center_vertical"
         android:layout_toEndOf="@id/mtrl_list_item_icon"
         android:paddingEnd="16dp"
-        android:maxLines="1"
+        android:maxLines="20"
         android:textAppearance="?attr/textAppearanceBody2"
         android:textColor="#ff212121"/>
 

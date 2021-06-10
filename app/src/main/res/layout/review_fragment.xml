@@ -7,101 +7,121 @@
     tools:context=".ui.review.ReviewActivity">
 
     <FrameLayout
+        android:id="@+id/register_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/register_progress"
         android:visibility="gone">
+
         <ProgressBar
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/register_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:id="@+id/register_form"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/description_label"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="Description"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="Description"
-            android:layout_marginBottom="10dp"
-            android:textSize="14dp"
-            android:textStyle="bold" />
-
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/detach_file_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="left"
-            android:contentDescription="download"
-            android:text="Download the attach file."
-            app:backgroundTint="?attr/colorAccent"
-            app:iconTint="@color/white"
-            android:textColor="@color/white"
-            app:icon="@drawable/baseline_file_download_24"/>
-
-        <me.zhanghai.android.materialratingbar.MaterialRatingBar
-            android:id="@+id/rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            style="@style/Widget.MaterialRatingBar.RatingBar" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/review_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="@string/title_dlg_placeholder">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
+                android:id="@+id/description_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:text="Description"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:text="Description"
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/review_txt_static"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="Description"
-            android:textSize="14dp"
-            android:textStyle="bold" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_gravity="center"
-            android:contentDescription="Submit"
-            android:text="Submit"
-            app:backgroundTint="?attr/colorPrimary"
-            app:iconTint="@color/white"
-            android:textColor="@color/white"
-            app:icon="@drawable/ic_send"/>
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/detach_file_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="16dp"
+                android:contentDescription="download"
+                android:text="Download the attach file."
+                android:textColor="@color/white"
+                app:backgroundTint="?attr/colorAccent"
+                app:icon="@drawable/baseline_file_download_24"
+                app:iconTint="@color/white" />
+
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                android:id="@+id/rating"
+                style="@style/Widget.MaterialRatingBar.RatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/review_txt"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title_dlg_placeholder">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/review_txt_static"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="Description"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:contentDescription="Submit"
+                android:text="Submit"
+                android:textColor="@color/white"
+                app:backgroundTint="?attr/colorPrimary"
+                app:icon="@drawable/ic_send"
+                app:iconTint="@color/white" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/my_tasklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+
     </LinearLayout>
 </FrameLayout>

@@ -20,9 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -41,11 +45,14 @@ import my.edu.utar.drawertest.MainActivity;
 import my.edu.utar.drawertest.R;
 import my.edu.utar.drawertest.data.GlobalClass;
 import my.edu.utar.drawertest.ui.common.LoadingFragment;
+import my.edu.utar.drawertest.ui.dialog.ListsMainDemoAdapter;
 import my.edu.utar.drawertest.ui.home.AssignmentsActivity;
 import my.edu.utar.drawertest.ui.login.LoggedInUserView;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -80,6 +87,13 @@ public class PostFormActivity extends AppCompatActivity {
     private static final int STORAGE_PERMISSION_CODE = 123;
     private int PICK_PDF_REQUEST = 1;
     private String upload_extension;
+
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private ListsMainDemoAdapter adapter;
+
+    private View formView;
+    private View progressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +158,6 @@ public class PostFormActivity extends AppCompatActivity {
                     }
                 });
 
-
                 // ************************//
             }
         });
@@ -180,15 +193,31 @@ public class PostFormActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
     }
 
+    public void showProgress(Boolean show) {
+        if (show) {
+            formView.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
+        } else {
+            formView.setVisibility(View.VISIBLE);
+            progressView.setVisibility(View.GONE);
+        }
+    }
+
     public void onInitialize() {
-
-
         description = getIntent().getStringExtra("DESCRIPTION");
         task_key = getIntent().getStringExtra("TASK_KEY");
         submission_key = getIntent().getStringExtra("SUBMISSION_KEY");
         GlobalClass global = GlobalClass.getInstance();
         LoggedInUserView userInfo = global.getUserInfo();
         selfkey = userInfo.getKey();
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_tasklist);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        adapter = new ListsMainDemoAdapter(this);
+
+        formView = findViewById(R.id.main_layout);
+        progressView = findViewById(R.id.register_progress);
 
         submitBtn = (ExtendedFloatingActionButton) findViewById(R.id.post);
         tv_description = (TextView) findViewById(R.id.description);
@@ -197,18 +226,39 @@ public class PostFormActivity extends AppCompatActivity {
         tv_description.setText(description);
         btn_upload = (Button) findViewById(R.id.upload);
         btn_upload.setOnClickListener(v -> {
-//            Intent intent = new Intent();
-//            //sets the select file to all types of files
-//            intent.setType("*/*");
-//            //allows to select data and return it
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            //starts new activity to select file and return data
-//            startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), FILE_PICKER_REQUEST_CODE);
             Intent intent = new Intent();
             intent.setType("*/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST);
         });
+
+        adapter.setType(8);
+        //**** FIREBASE LOGIN ****//
+        showProgress(true);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .document(selfkey)
+                .collection("joined_tasks")
+                .document(task_key + submission_key)
+                .collection("reviews")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
+                                        (String)document.getData().get("description"));
+                            }
+                            mRecyclerView.setAdapter(adapter);
+                        } else {
+                            Log.d(TAG, "Error getting rdocuments: ", task.getException());
+                        }
+                        showProgress(false);
+                    }
+                });
+
     }
 
     @Override
@@ -242,12 +292,9 @@ public class PostFormActivity extends AppCompatActivity {
             } catch (Exception e) {
 
             }
-            File file = null;
             if (path == null) {
-                file = new File(filePath.getPath());
                 tv_uploadpath.setText(filePath.getPath());
             } else {
-                file = new File(path);
                 tv_uploadpath.setText(path);
             }
 
