@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Drawertest">
         <activity android:name=".CreateActivity"></activity>
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".UpdateActivity" />
+        <activity android:name=".SubmissionUpdateActivity" />
+
         <activity android:name=".ui.home.StudentActivity" />
         <activity android:name=".ui.review.ReviewActivity" />
         <activity android:name=".ui.home.TeacherReviewActivity" />

@@ -248,7 +248,13 @@ public class PostFormActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
+                                float completeness_rating = Float.parseFloat((String) document.getData().get("completeness_rating"));
+                                float participation_rating = Float.parseFloat((String) document.getData().get("participation_rating"));
+                                float punctuality_rating = Float.parseFloat((String) document.getData().get("punctuality_rating"));
+
+                                adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  String.valueOf(completeness_rating),
+                                        String.valueOf(participation_rating),
+                                        String.valueOf(punctuality_rating),
                                         (String)document.getData().get("description"));
                             }
                             mRecyclerView.setAdapter(adapter);

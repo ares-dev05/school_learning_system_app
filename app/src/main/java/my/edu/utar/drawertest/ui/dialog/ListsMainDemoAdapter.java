@@ -3,6 +3,7 @@ package my.edu.utar.drawertest.ui.dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import my.edu.utar.drawertest.R;
+import my.edu.utar.drawertest.SubmissionUpdateActivity;
+import my.edu.utar.drawertest.UpdateActivity;
 import my.edu.utar.drawertest.data.GlobalClass;
 import my.edu.utar.drawertest.ui.home.AssignmentsActivity;
 import my.edu.utar.drawertest.ui.home.StudentActivity;
@@ -64,11 +67,10 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
         mContext = context;
     }
 
-    public void addReviewList(String user_key, String name, String rating, String description) {
-        ReviewListObject object = new ReviewListObject(user_key, name, rating, description);
+    public void addReviewList(String user_key, String name, String completeness_rating, String participation_rating, String punctuality_rating,String description) {
+        ReviewListObject object = new ReviewListObject(user_key, name, completeness_rating, participation_rating, punctuality_rating, description);
         mReviewList.add(object);
     }
-
     public void setReviewList(ArrayList<ReviewListObject> object) {
         mReviewList = object;
     }
@@ -178,12 +180,39 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
             default: // fall out
         }
 
+        viewHolder.itemView.setOnLongClickListener(v -> {
+            if(mType == ITEM_ALL_TASK_LINE) {
+                GlobalClass global = GlobalClass.getInstance();
+                LoggedInUserView userInfo = global.getUserInfo();
+                if(userInfo.isTeacher()) {
+                    Intent intent = new Intent(mContext, UpdateActivity.class);
+                    TasksListObject selectedItem = mTasksList.get(position);
+                    String key = selectedItem.getKey();
+                    intent.putExtra("TASK_KEY", key);
+                    mContext.startActivity(intent);
+                }
+                return true;
+            } else if(mType == ITEM_ASSIGNMENTS_TYPE) {
+                GlobalClass global = GlobalClass.getInstance();
+                LoggedInUserView userInfo = global.getUserInfo();
+                if(userInfo.isTeacher()) {
+                    Intent intent = new Intent(mContext, SubmissionUpdateActivity.class);
+                    AssignmentsListObject selectedItem = mAssignmentList.get(position);
+
+                    intent.putExtra("TASK_KEY", selectedItem.getTaskKey());
+                    intent.putExtra("ASSIGNMENT_KEY", selectedItem.getKey());
+                    mContext.startActivity(intent);
+                }
+
+            }
+            return true;
+        });
+
         viewHolder.itemView.setOnClickListener(
                 v -> {
                     if(mType == ITEM_SINGLE_LINE) {
 
                     } else if(mType == ITEM_ASSIGNMENTS_TYPE) {
-
 
                         AssignmentsListObject selectedItem = mAssignmentList.get(position);
                         String taskkey = selectedItem.getTaskKey();
@@ -391,7 +420,7 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
 
         holder.tv_title.setText(title);
         holder.tv_description.setText(description);
-        holder.tv_deadline.setText(time);
+        holder.tv_deadline.setVisibility(View.GONE);
         holder.icon.setImageResource(R.drawable.baseline_subject_24);
 
     }
@@ -399,13 +428,21 @@ public class ListsMainDemoAdapter extends RecyclerView.Adapter<SingleLineItemVie
     public void bindReviewHolder(ReviewLineItemViewHolder holder, int position) {
         final String name = mReviewList.get(position).getName();
         final String description = mReviewList.get(position).getDescription();
-        final String rating = mReviewList.get(position).getRating();
+        final String rating1 = mReviewList.get(position).getRating1();
+        final String rating2 = mReviewList.get(position).getRating2();
+        final String rating3 = mReviewList.get(position).getRating3();
 
         holder.tv_title.setText(name);
         holder.tv_description.setText(description);
-        float rate = Float.parseFloat(rating);
-        holder.ratingBar.setRating(rate);
-        holder.ratingBar.setEnabled(false);
+        float rate1 = Float.parseFloat(rating1);
+        float rate2 = Float.parseFloat(rating2);
+        float rate3 = Float.parseFloat(rating3);
+        holder.ratingBar1.setRating(rate1);
+        holder.ratingBar1.setEnabled(false);
+        holder.ratingBar2.setRating(rate2);
+        holder.ratingBar2.setEnabled(false);
+        holder.ratingBar3.setRating(rate3);
+        holder.ratingBar3.setEnabled(false);
 
     }
 

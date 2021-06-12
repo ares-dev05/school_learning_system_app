@@ -1,9 +1,5 @@
 package my.edu.utar.drawertest;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,12 +8,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -28,9 +29,10 @@ import my.edu.utar.drawertest.ui.DatePickerFragment;
 import my.edu.utar.drawertest.ui.home.AssignmentsActivity;
 import my.edu.utar.drawertest.ui.login.LoggedInUserView;
 
-public class CreateActivity extends AppCompatActivity {
+public class UpdateActivity extends AppCompatActivity {
 
-    public Button btn_create;
+    public Button btn_update;
+    public Button btn_delete;
     public TextView edt_submissioin_period;
     public TextView edt_review_period;
     private DialogFragment fragment;
@@ -42,7 +44,9 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create);
+        setContentView(R.layout.activity_update);
+
+        String task_key = getIntent().getStringExtra("TASK_KEY");
 
         tv_task_title = (TextView) findViewById(R.id.task_title);
         tv_task_description = (TextView) findViewById(R.id.task_description);
@@ -65,26 +69,66 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
-        btn_create = (Button) findViewById(R.id.btn_create_task);
-        btn_create.setOnClickListener(view -> {
+        btn_delete = (Button) findViewById(R.id.btn_delete_task);
+        btn_delete.setOnClickListener(view -> {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("task").document(task_key).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    GlobalClass global = GlobalClass.getInstance();
+                    LoggedInUserView userInfo = global.getUserInfo();
+                    db.collection("users").document(userInfo.getKey()).collection("tasks").document(task_key).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            Toast.makeText(getApplicationContext(), "Successfully deleted.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error deleting document", e);
+                            Toast.makeText(getApplicationContext(), "Failed delete.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error deleting document", e);
+                    Toast.makeText(getApplicationContext(), "Failed delete.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        btn_update = (Button) findViewById(R.id.btn_update_task);
+        btn_update.setOnClickListener(view -> {
             String title = tv_task_title.getText().toString();
             String description = tv_task_description.getText().toString();
             String submission_period = edt_submissioin_period.getText().toString();
             String review_period = edt_review_period.getText().toString();
 
-            if(title.equals("")) {
+            if (title.equals("")) {
                 Toast.makeText(getApplicationContext(), "Please input the title field.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(description.equals("")) {
+            if (description.equals("")) {
                 Toast.makeText(getApplicationContext(), "Please input the description field.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(submission_period.equals("")) {
+            if (submission_period.equals("")) {
                 Toast.makeText(getApplicationContext(), "Please input the submission period field.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(review_period.equals("")) {
+            if (review_period.equals("")) {
                 Toast.makeText(getApplicationContext(), "Please input the review period field.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -100,12 +144,12 @@ public class CreateActivity extends AppCompatActivity {
             data.put("user_id", userInfo.getKey());
 
             db.collection("task")
-                    .add(data)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    .document(task_key)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                            String taskID = documentReference.getId();
+                        public void onSuccess(Void aVoid) {
+                            String taskID = task_key;
 
                             GlobalClass global = GlobalClass.getInstance();
                             LoggedInUserView userInfo = global.getUserInfo();
@@ -151,30 +195,48 @@ public class CreateActivity extends AppCompatActivity {
                     });
 
         });
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("task")
+                .document(task_key)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        boolean isJoined = true;
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            edt_submissioin_period.setText((String) document.getData().get("submission_period"));
+                            edt_review_period.setText((String) document.getData().get("review_period"));
+                            tv_task_title.setText((String) document.getData().get("title"));
+                            tv_task_description.setText((String) document.getData().get("description"));
+                        }
+                    }
+                });
     }
 
-    public void onDateSet(int year, int month, int day){
+    public void onDateSet(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
-        if(year == c.get(Calendar.YEAR) && month == c.get(Calendar.MONTH) &&
+        if (year == c.get(Calendar.YEAR) && month == c.get(Calendar.MONTH) &&
                 day == c.get(Calendar.DAY_OF_MONTH)) {
-            if(picker_role == 1) {
+            if (picker_role == 1) {
                 edt_submissioin_period.setText(year + "." + (month + 1) + "." + day);
-            } else if(picker_role == 2) {
+            } else if (picker_role == 2) {
                 edt_review_period.setText(year + "." + (month + 1) + "." + day);
             }
-        }
-        else {
-            if(picker_role == 1) {
+        } else {
+            if (picker_role == 1) {
                 edt_submissioin_period.setText(year + "." + (month + 1) + "." + day);
-            } else if(picker_role == 2) {
+            } else if (picker_role == 2) {
                 edt_review_period.setText(year + "." + (month + 1) + "." + day);
             }
         }
     }
 
-    private void showDatePickerDialog(){
-        if(fragment == null) {
-            fragment = new DatePickerFragment(0);
+    private void showDatePickerDialog() {
+        if (fragment == null) {
+            fragment = new DatePickerFragment(1);
         }
         fragment.show(getSupportFragmentManager(), "datePicker");
     }

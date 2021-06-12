@@ -11,6 +11,11 @@
             android:title="@string/menu_home" />
 
         <item
+            android:id="@+id/nav_task_students"
+            android:icon="@drawable/baseline_subject_24"
+            android:title="@string/menu_task" />
+
+        <item
             android:id="@+id/nav_postResult"
             android:icon="@drawable/baseline_note_add_24"
             android:title="@string/menu_postResult" />

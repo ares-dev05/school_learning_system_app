@@ -11,6 +11,7 @@
     <string name="menu_overview">Review Assignment</string>
     <string name="menu_newTask">Post new Task</string>
     <string name="menu_postResult">My result</string>
+    <string name="menu_task">Task</string>
     <string name="menu_students">Manage Students</string>
     <string name="menu_review">Review Assignment</string>
     <string name="menu_time">Timeline</string>

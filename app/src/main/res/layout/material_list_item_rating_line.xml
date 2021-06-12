@@ -50,17 +50,86 @@
 
             </LinearLayout>
 
-            <me.zhanghai.android.materialratingbar.MaterialRatingBar
-                android:id="@+id/rating"
-                style="@style/Widget.MaterialRatingBar.RatingBar"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_weight="1" />
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:id="@+id/punctuality_rating_label"
+                    android:layout_weight="1"
+                    android:text="How do you think about Punctuality?"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                    android:id="@+id/punctuality_rating"
+                    style="@style/Widget.MaterialRatingBar.RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:id="@+id/completeness_rating_label"
+                    android:layout_weight="1"
+                    android:text="How about the Completeness of work?"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                    android:id="@+id/completeness_rating"
+                    style="@style/Widget.MaterialRatingBar.RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:id="@+id/discussion_rating_label"
+                    android:layout_weight="1"
+                    android:text="How about Participation in the discussion?"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                    android:id="@+id/discussion_rating"
+                    style="@style/Widget.MaterialRatingBar.RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -69,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:maxLines="20"
-                    android:paddingEnd="16dp"
+                    android:paddingEnd="19dp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="@color/mtrl_list_item_tint" />
             </LinearLayout>

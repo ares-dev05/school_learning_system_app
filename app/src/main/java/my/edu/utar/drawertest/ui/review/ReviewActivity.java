@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,10 +78,23 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     public ExtendedFloatingActionButton submitBtn;
-    public MaterialRatingBar ratingBar;
+    public MaterialRatingBar punctuality_ratingBar;
+    public MaterialRatingBar completeness_ratingBar;
+    public MaterialRatingBar participation_ratingBar;
+    public MaterialRatingBar av_punctuality_ratingBar;
+    public MaterialRatingBar av_completeness_ratingBar;
+    public MaterialRatingBar av_participation_ratingBar;
+    public MaterialRatingBar overall_ratingBar;
+    public TextView punctuality_tv;
+    public TextView completeness_tv;
+    public TextView participation_tv;
+    private LinearLayout security_review;
+    private LinearLayout av_layout;
 
     public TextInputLayout reviewText;
     public ExtendedFloatingActionButton detach_file_tv;
+    public ExtendedFloatingActionButton detail_btn;
+
     public TextView description_tv;
     public TextView review_txt_static_tv;
     private String down_url;
@@ -134,17 +148,44 @@ public class ReviewActivity extends AppCompatActivity {
 
 
         submitBtn = (ExtendedFloatingActionButton) findViewById(R.id.submit);
-        ratingBar = (MaterialRatingBar) findViewById(R.id.rating);
+        punctuality_ratingBar = (MaterialRatingBar) findViewById(R.id.punctuality_rating);
+        completeness_ratingBar = (MaterialRatingBar) findViewById(R.id.completeness_rating);
+        participation_ratingBar = (MaterialRatingBar) findViewById(R.id.discussion_rating);
+        av_punctuality_ratingBar = (MaterialRatingBar) findViewById(R.id.av_punctuality_rating);
+        av_completeness_ratingBar = (MaterialRatingBar) findViewById(R.id.av_completeness_rating);
+        av_participation_ratingBar = (MaterialRatingBar) findViewById(R.id.av_discussion_rating);
+        overall_ratingBar = (MaterialRatingBar) findViewById(R.id.overall_rating);
+
         reviewText = (TextInputLayout) findViewById(R.id.review_txt);
         detach_file_tv = (ExtendedFloatingActionButton) findViewById(R.id.detach_file_url);
+        detail_btn = (ExtendedFloatingActionButton) findViewById(R.id.detail_btn);
         description_tv = (TextView) findViewById(R.id.description);
-        review_txt_static_tv = (TextView) findViewById(R.id.review_txt_static);
         description_tv.setText(result_description);
+
+        security_review = (LinearLayout)findViewById(R.id.security_review);
+//        av_layout = (LinearLayout)findViewById(R.id.av_layout);
+
+        punctuality_tv = (TextView) findViewById(R.id.punctuality_rating_label);
+        completeness_tv = (TextView) findViewById(R.id.completeness_rating_label);
+        participation_tv = (TextView) findViewById(R.id.discussion_rating_label);
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_tasklist);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         adapter = new ListsMainDemoAdapter(this);
+
+        detail_btn.setOnClickListener(v -> {
+            if(mRecyclerView.getVisibility() == View.GONE) {
+                mRecyclerView.setVisibility(View.VISIBLE);
+//                av_layout.setVisibility(View.VISIBLE);
+                security_review.setVisibility(View.GONE);
+            } else {
+                mRecyclerView.setVisibility(View.GONE);
+                security_review.setVisibility(View.VISIBLE);
+//                av_layout.setVisibility(View.VISIBLE);
+            }
+        });
 
         adapter.setType(8);
 
@@ -165,13 +206,13 @@ public class ReviewActivity extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             info = document.getData();
 
-                            if(info == null) {
+                            if (info == null) {
                                 isDone = false;
                             } else {
                                 try {
-                                    description_tv.setText((String)document.getData().get("post_result_description"));
-                                    down_url = (String)document.getData().get("post_result_url");
-                                    download_extention = (String)document.getData().get("post_data_extension");
+                                    description_tv.setText((String) document.getData().get("post_result_description"));
+                                    down_url = (String) document.getData().get("post_result_url");
+                                    download_extention = (String) document.getData().get("post_data_extension");
                                 } catch (Exception e) {
 
                                 }
@@ -190,25 +231,62 @@ public class ReviewActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         boolean isDone = false;
                                         if (task.isSuccessful()) {
+                                            float completeness_rating_all = 0;
+                                            float participation_rating_all = 0;
+                                            float punctuality_rating_all = 0;
+                                            int all_count = 0;
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
-                                                if(document.getId().equals(selfKey)) {
+                                                float completeness_rating = Float.parseFloat((String) document.getData().get("completeness_rating"));
+                                                float participation_rating = Float.parseFloat((String) document.getData().get("participation_rating"));
+                                                float punctuality_rating = Float.parseFloat((String) document.getData().get("punctuality_rating"));
+
+                                                completeness_rating_all += completeness_rating;
+                                                participation_rating_all += participation_rating;
+                                                punctuality_rating_all += punctuality_rating;
+                                                all_count++;
+
+                                                if (document.getId().equals(selfKey)) {
                                                     isDone = true;
-                                                    adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
-                                                            (String)document.getData().get("description"));
-                                                } else if(role) {
-                                                    adapter.addReviewList(document.getId(), (String)document.getData().get("name"),  (String)document.getData().get("rating"),
-                                                            (String)document.getData().get("description"));
+                                                    adapter.addReviewList(document.getId(), (String) document.getData().get("name"), String.valueOf(completeness_rating),
+                                                            String.valueOf(participation_rating),
+                                                            String.valueOf(punctuality_rating),
+                                                            (String) document.getData().get("description"));
+                                                } else if (role) {
+                                                    adapter.addReviewList(document.getId(), (String) document.getData().get("name"), String.valueOf(completeness_rating),
+                                                            String.valueOf(participation_rating),
+                                                            String.valueOf(punctuality_rating),
+                                                            (String) document.getData().get("description"));
                                                 }
                                             }
                                             mRecyclerView.setAdapter(adapter);
 
-                                            if(isDone) {
-                                                ratingBar.setVisibility(View.GONE);
+                                            if (isDone) {
+                                                punctuality_ratingBar.setVisibility(View.GONE);
+                                                completeness_ratingBar.setVisibility(View.GONE);
+                                                participation_ratingBar.setVisibility(View.GONE);
+                                                punctuality_tv.setVisibility(View.GONE);
+                                                completeness_tv.setVisibility(View.GONE);
+                                                participation_tv.setVisibility(View.GONE);
+
                                                 reviewText.setVisibility(View.GONE);
                                                 submitBtn.setVisibility(View.GONE);
-                                                review_txt_static_tv.setVisibility(View.GONE);
+
+                                                if(role) {
+                                                    av_punctuality_ratingBar.setEnabled(false);
+                                                    av_completeness_ratingBar.setEnabled(false);
+                                                    av_participation_ratingBar.setEnabled(false);
+                                                    av_punctuality_ratingBar.setRating(completeness_rating_all / all_count);
+                                                    av_completeness_ratingBar.setRating(participation_rating_all / all_count);
+                                                    av_participation_ratingBar.setRating(punctuality_rating_all / all_count);
+                                                    float av = (completeness_rating_all + participation_rating_all + punctuality_rating_all) / 3 / all_count;
+                                                    overall_ratingBar.setRating(av);
+                                                    detail_btn.setVisibility(View.VISIBLE);
+                                                    security_review.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    mRecyclerView.setVisibility(View.VISIBLE);
+                                                }
                                             }
                                         }
 
@@ -226,7 +304,11 @@ public class ReviewActivity extends AppCompatActivity {
                 loadingFragment.show(getSupportFragmentManager(), "Submiting the result...");
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Map<String, Object> data = new HashMap<>();
-                data.put("rating", String.valueOf(ratingBar.getRating()));
+
+                data.put("punctuality_rating", String.valueOf(punctuality_ratingBar.getRating()));
+                data.put("completeness_rating", String.valueOf(completeness_ratingBar.getRating()));
+                data.put("participation_rating", String.valueOf(participation_ratingBar.getRating()));
+
                 data.put("description", reviewText.getEditText().getText().toString());
 
                 db.collection("users")
@@ -241,7 +323,9 @@ public class ReviewActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("name", userInfo.getDisplayName());
-                                data.put("rating", String.valueOf(ratingBar.getRating()));
+                                data.put("punctuality_rating", String.valueOf(punctuality_ratingBar.getRating()));
+                                data.put("completeness_rating", String.valueOf(completeness_ratingBar.getRating()));
+                                data.put("participation_rating", String.valueOf(participation_ratingBar.getRating()));
                                 data.put("description", reviewText.getEditText().getText().toString());
                                 db.collection("users")
                                         .document(student_key)
@@ -307,7 +391,7 @@ public class ReviewActivity extends AppCompatActivity {
 
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK) {
 
-        } else if( requestCode == CREATE_FILE && resultCode == RESULT_OK) {
+        } else if (requestCode == CREATE_FILE && resultCode == RESULT_OK) {
             loadingFragment.show(getSupportFragmentManager(), "Downloading...");
             try {
                 Uri filePath = data.getData();
@@ -357,7 +441,7 @@ public class ReviewActivity extends AppCompatActivity {
                         loadingFragment.dismiss();
                     }
                 });
-            }catch (Exception e) {
+            } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                 loadingFragment.dismiss();
             }

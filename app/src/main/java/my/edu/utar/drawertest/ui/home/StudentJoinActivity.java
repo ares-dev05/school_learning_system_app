@@ -12,10 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ public class StudentJoinActivity extends AppCompatActivity {
     private TextView mDescription;
     private ExtendedFloatingActionButton btn_join;
     private String TAG = "--- ARES ----";
+    private String submission_period;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +66,24 @@ public class StudentJoinActivity extends AppCompatActivity {
         LoggedInUserView userInfo = global.getUserInfo();
         String selfKey = userInfo.getKey();
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("task")
+                .document(taskId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        boolean isJoined = true;
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            submission_period = (String) document.getData().get("submission_period");
+                        }
+                    }
+                });
+
         mDescription.setText(description);
         btn_join.setOnClickListener(v -> {
             // **** FIRE BASE **** //
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, Object> joinInfo = new HashMap<>();
             joinInfo.put("name", userInfo.getDisplayName());
             joinInfo.put("email", userInfo.getEmail());
@@ -83,7 +101,8 @@ public class StudentJoinActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             Map<String, Object> data = new HashMap<>();
-                            joinInfo.put("task_key", taskId);
+                            data.put("submission_period", submission_period);
+
                             db.collection("users")
                                     .document(selfKey)
                                     .collection("joined_tasks")

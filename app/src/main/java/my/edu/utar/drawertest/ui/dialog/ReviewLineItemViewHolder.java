@@ -15,13 +15,17 @@ public class ReviewLineItemViewHolder extends TwoLineItemViewHolder {
 
     public final TextView tv_name;
     public final TextView tv_description;
-    public final MaterialRatingBar ratingBar;
+    public final MaterialRatingBar ratingBar1;
+    public final MaterialRatingBar ratingBar2;
+    public final MaterialRatingBar ratingBar3;
 
     public ReviewLineItemViewHolder(@NonNull View view) {
         super(view);
         this.tv_name = itemView.findViewById(R.id.mtrl_list_item_title);
         this.tv_description = itemView.findViewById(R.id.mtrl_list_item_description);
-        this.ratingBar = itemView.findViewById(R.id.rating);
+        this.ratingBar1 = itemView.findViewById(R.id.punctuality_rating);
+        this.ratingBar2 = itemView.findViewById(R.id.completeness_rating);
+        this.ratingBar3 = itemView.findViewById(R.id.discussion_rating);
     }
 
     @NonNull

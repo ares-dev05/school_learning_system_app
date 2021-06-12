@@ -81,29 +81,31 @@ public class StudentPostActivity extends AppCompatActivity {
                                 final String title = (String) document.getData().get("title");
                                 final String description = (String) document.getData().get("description");
                                 final String review_period = (String) document.getData().get("review_period");
-                                db.collection("task")
-                                        .document(taskKey)
-                                        .collection("submissions")
-                                        .document(submission_key)
-                                        .collection("joined_students")
+
+                                db.collection("users")
                                         .document(selfkey)
+                                        .collection("joined_tasks")
                                         .get()
-                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot document = task.getResult();
-                                                    adapter.addAssignmentList(taskKey, submission_key, title, description, review_period);
-                                                    mRecyclerView.setAdapter(adapter);
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                                    String key = taskKey + submission_key;
+                                                    if(key.equals(document.getId())) {
+                                                        adapter.addAssignmentList(taskKey, submission_key, title, description, review_period);
+                                                        mRecyclerView.setAdapter(adapter);
+                                                    }
 
                                                 }
+                                                showProgress(false);
                                             }
                                         });
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                        showProgress(false);
+
                     }
                 });
 

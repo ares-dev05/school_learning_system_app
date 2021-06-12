@@ -7,8 +7,14 @@
 
     <fragment
         android:id="@+id/nav_home_students"
-        android:name="my.edu.utar.drawertest.ui.home.StudentHomeActivity"
+        android:name="my.edu.utar.drawertest.ui.home.StudentDashBoardActivity"
         android:label="@string/menu_home"
+        tools:layout="@layout/activity_assignment" />
+
+    <fragment
+        android:id="@+id/nav_task_students"
+        android:name="my.edu.utar.drawertest.ui.home.StudentHomeActivity"
+        android:label="@string/menu_task"
         tools:layout="@layout/activity_assignment" />
 
     <fragment
